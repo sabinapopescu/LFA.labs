@@ -1,0 +1,15 @@
+{
+  "name": "lfa.labs",
+  "version": "1.0.0",
+  "type": "module", 
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lab1": "node RegularGrammar/src/index.js",
+    "lab2": "node AnotherLab/src/index.js",
+    "lab3": "node YetAnotherLab/src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
