@@ -210,6 +210,7 @@ You might see tokens like:
   Token { type: 'EOF', value: null }
 ]
 ```
+![Screenshot 2025-03-09 174102](https://github.com/user-attachments/assets/1b40a54d-4d68-450f-a527-5aadedefaf8f)
 
 ## 5. Conclusion
 
