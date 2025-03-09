@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "lab1": "node RegularGrammar/src/index.js",
-    "lab2": "node AnotherLab/src/index.js",
-    "lab3": "node YetAnotherLab/src/index.js"
+    "lab2": "node FiniteAutomata/src/index.js",
+    "lab3": "node LexerScanner/src/index.js"
   },
   "keywords": [],
   "author": "",

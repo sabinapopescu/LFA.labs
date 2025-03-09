@@ -1,45 +1,23 @@
-// RegularGrammar/src/index.js
-import { FiniteAutomaton } from "./FiniteAutomaton.js";
+// index.js
+import { Grammar } from "./Grammar.js";
 
-// 1) Define the FA components based on Variant 24
-const states = ["q0", "q1", "q2"];
-const alphabet = ["a", "b"];
-const transitions = [
-  // δ(q0, b) = q0
-  { src: "q0", char: "b", dest: "q0" },
-  // δ(q0, b) = q1
-  { src: "q0", char: "b", dest: "q1" },
-  // δ(q1, b) = q2
-  { src: "q1", char: "b", dest: "q2" },
-  // δ(q0, a) = q0
-  { src: "q0", char: "a", dest: "q0" },
-  // δ(q1, a) = q1
-  { src: "q1", char: "a", dest: "q1" },
-  // δ(q2, a) = q2
-  { src: "q2", char: "a", dest: "q2" }
-];
+const grammar = new Grammar();
+const fa = grammar.to_finite_automaton();
 
-const startState = "q0";
-const acceptStates = ["q2"];
+console.log("Finite Automaton created:", fa);
 
-// 2) Create the FA object
-const fa = new FiniteAutomaton(states, alphabet, transitions, startState, acceptStates);
+// Let’s pick some test strings (including one you know is derivable: "adba")
+let testStrings = ["ab", "ad", "bd", "bbba", "adba"];
 
-// 3) Test some input strings
-const testStrings = [
-  "",        // empty string
-  "b",       // single 'b'
-  "bb",      // multiple 'b'
-  "abb",     // a then b
-  "bbb",     // ...
-  "aaa",
-  "baaaaab", // etc.
-  "abba",
-  "bababa",
-  "bba"  
-];
-
-for (const s of testStrings) {
-  const accepted = fa.accept(s);
-  console.log(`String "${s}" => accepted? ${accepted}`);
+// Also generate 5 random strings from the grammar
+for (let i = 0; i < 5; i++) {
+  testStrings.push(grammar.generate_string());
 }
+
+console.log("Generated strings to test:", testStrings);
+
+testStrings.forEach((s) => {
+  console.log(`String '${s}' => accepted? ${fa.accept(s)}`);
+});
+
+console.log("Classification:", grammar.classify());

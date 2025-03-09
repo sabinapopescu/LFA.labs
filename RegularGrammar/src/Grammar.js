@@ -1,88 +1,159 @@
-// RegularGrammar/src/Grammar.js
+// Grammar.js
 import { FiniteAutomaton } from "./FiniteAutomaton.js";
 
 export class Grammar {
   constructor() {
-    // (You can keep these hard-coded or pass them as constructor params if you prefer.)
-    this.V_t = ["a", "b", "c", "d", "e", "f", "j"];  // terminals
-    this.V_n = ["S", "L", "D"];                     // non-terminals
-    this.P = [
-      "S-aS", "S-bS", "S-cD", "S-dL", "S-e", 
-      "L-eL", "L-fL", "L-jD", "L-e", 
-      "D-eD", "D-d"
-    ];                                               // productions
-    this.S = "S";                                    // start symbol
+    // Terminals include 'd' as well, because of A → dD
+    this.terminals = ["a", "b", "d"];
+    // Non-terminals
+    this.non_terminals = ["S", "A", "C", "D"];
+    // Right-linear rules in "X-..." form
+    // Each rule "X-yZ" means X → yZ in the usual grammar notation
+    this.rules = [
+      "S-aA",  // S → aA
+      "A-bS",  // A → bS
+      "A-dD",  // A → dD
+      "D-bC",  // D → bC
+      "C-a",   // C → a
+      "C-bA",  // C → bA
+      "D-aD",  // D → aD
+    ];
+    // Start symbol
+    this.start = "S";
   }
 
-  // Recursively generate a random valid string from the grammar.
-  generateString() {
-    // Inner function that recursively expands a symbol
+  /**
+   * Generates a random string by recursively expanding non-terminals.
+   * WARNING: Because of D → aD, strings can get very long. 
+   * In practice, you might want to cap the recursion depth.
+   */
+  generate_string() {
     const expand = (symbol) => {
-      // If it's a terminal, just return it.
-      if (this.V_t.includes(symbol)) {
+      // If it's a terminal, just return it
+      if (this.terminals.includes(symbol)) {
         return symbol;
       }
 
-      // Find all productions for the non-terminal `symbol`.
-      const matchingProductions = this.P
-        .filter((rule) => rule.startsWith(symbol + "-"))
-        .map((rule) => rule.split("-")[1]); 
-        // e.g. "S-aS" => right side is "aS"
+      // Otherwise, find the rules for this non-terminal
+      const productions = this.rules
+        .filter((rule) => rule.startsWith(symbol + "-")) // e.g. "S-..."
+        .map((rule) => rule.split("-")[1]);              // right side strings
 
-      // Pick one production at random
-      const chosenProduction = matchingProductions[
-        Math.floor(Math.random() * matchingProductions.length)
-      ];
-
-      // Expand each character of the chosen production
-      let result = "";
-      for (const char of chosenProduction) {
-        result += expand(char);
+      // If no production found, stop expansion
+      if (productions.length === 0) {
+        return "";
       }
-      return result;
+
+      // Randomly pick one production
+      const chosen = productions[Math.floor(Math.random() * productions.length)];
+
+      // Example: chosen = "aA" => split into ["a", "A"], expand each recursively
+      return chosen
+        .split("")
+        .map((s) => expand(s))
+        .join("");
     };
 
-    // Start expanding from the start symbol
-    return expand(this.S);
+    // Start from S
+    return expand(this.start);
   }
 
-  // Convert Grammar to a Finite Automaton
-  toFiniteAutomaton() {
-    const alphabet = [...this.V_t];
-    const states = [...this.V_n];
-    // We'll add an "end" state for when we produce a single terminal and stop
-    states.push("end");
+  /**
+   * Converts the grammar to a (very simplistic) finite automaton.
+   * This is your colleague’s “transitions” approach:
+   *  - If X → y (1 terminal), then from state X on y go to "end".
+   *  - If X → yZ (terminal + nonterminal), from X on y go to Z.
+   * 
+   * NOTE: This lumps all final transitions into a single "end" state.
+   */
+  to_finite_automaton() {
+    const alphabet = [...this.terminals];
+    // They treat states as the grammar's non-terminals plus one extra "end" state
+    const states = [...this.non_terminals, "end"];
+    const start_state = this.start;
+    const accept_state = "end";
 
-    const startState = this.S;
-    const acceptState = "end";
-
-    // We'll store transitions as an array of objects { src, char, dest }
     const transitions = [];
 
-    for (const production of this.P) {
-      const [leftSide, rightSide] = production.split("-");
-      // If rightSide is a single terminal, that leads us to the 'end' state
-      if (rightSide.length === 1 && this.V_t.includes(rightSide)) {
+    this.rules.forEach((rule) => {
+      const [leftSide, rightSide] = rule.split("-");
+      // If the right side is exactly 1 character and it's terminal => transition to end
+      if (rightSide.length === 1 && this.terminals.includes(rightSide)) {
         transitions.push({
-          src: leftSide,
-          char: rightSide,
-          dest: acceptState
+          src: leftSide,    // from non-terminal (e.g. C)
+          char: rightSide,  // e.g. 'a'
+          dest: accept_state
         });
       } 
-      // If rightSide has multiple symbols, assume the first is a terminal & second is a non-terminal
-      else if (rightSide.length > 1) {
-        // e.g. "aS" => from state = leftSide, char = 'a', next state = 'S'
-        // This only accounts for the first two symbols. The example is mimicking your Python approach.
+      // If the right side is > 1 (e.g. 2 chars like "aA"), then from leftSide on firstChar => secondChar
+      else if (rightSide.length >= 2) {
+        const [t, n] = [rightSide[0], rightSide[1]];
         transitions.push({
-          src: leftSide,
-          char: rightSide[0],
-          dest: rightSide[1]
+          src: leftSide, // e.g. 'S'
+          char: t,       // e.g. 'a'
+          dest: n        // e.g. 'A'
         });
       }
-      // If your grammar had more complex right sides, you'd need additional logic.
-    }
+      // If there's any other pattern, it's ignored or not used in this simplistic approach
+    });
 
-    // Build and return a FiniteAutomaton object
-    return new FiniteAutomaton(states, alphabet, transitions, startState, acceptState);
+    return new FiniteAutomaton(
+      states,
+      alphabet,
+      transitions,
+      start_state,
+      accept_state
+    );
+  }
+
+  /**
+   * A simplistic “classification” check that tries to see if this grammar 
+   * is Type 3 (right-regular), Type 2, Type 1, or Type 0.
+   * 
+   * It's a rough check based on the shape of productions.
+   * 
+   * (Your colleague’s code checks if each rule is “terminal + optional single non-terminal”. 
+   *  If so, calls it Type 3.)
+   */
+  classify() {
+    let isType3 = true; // assume Regular
+    let isType2 = true; // assume Context-Free
+    let isType1 = true; // assume Context-Sensitive
+
+    this.rules.forEach((rule) => {
+      const [leftSide, rightSide] = rule.split("-");
+      const symbols = rightSide.split("");
+      const terminalSymbols = symbols.filter((sym) => this.terminals.includes(sym));
+      const nonTerminalSymbols = symbols.filter((sym) => this.non_terminals.includes(sym));
+
+      // Check Type 3 condition: (exactly 1 terminal + optional 1 nonterminal) or empty?
+      // We don't have ε-rules here, so ignore that. 
+      // This code is not a perfect definition, but we'll keep the colleague's logic.
+      if (!(terminalSymbols.length <= 1 && nonTerminalSymbols.length <= 1 && symbols.length <= 2)) {
+        isType3 = false;
+      }
+
+      // Check Type 2 condition: each rule has a single non-terminal on LHS
+      if (leftSide.length !== 1 || !this.non_terminals.includes(leftSide)) {
+        isType2 = false;
+      }
+
+      // Check Type 1 condition: right side length >= left side length (and no other constraints)
+      // (For context-sensitive, each production must not shrink the string except possibly S->ε if allowed.)
+      // Here we do a naive check:
+      if (rightSide.length < leftSide.length) {
+        isType1 = false;
+      }
+    });
+
+    if (isType3) {
+      return "Regular Grammar (Type 3)";
+    } else if (isType2) {
+      return "Context-Free Grammar (Type 2)";
+    } else if (isType1) {
+      return "Context-Sensitive Grammar (Type 1)";
+    } else {
+      return "Recursively Enumerable Grammar (Type 0)";
+    }
   }
 }

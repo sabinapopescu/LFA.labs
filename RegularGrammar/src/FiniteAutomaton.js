@@ -1,57 +1,57 @@
-
-
+// FiniteAutomaton.js
 export class FiniteAutomaton {
-    constructor(states, alphabet, transitions, startState, acceptStates) {
-      this.states = states;                 // array of states
-      this.alphabet = alphabet;             // array of valid symbols
-      this.transitions = transitions;       // array of { src, char, dest }
-      this.startState = startState;         // single start state
-      // acceptStates can be a single state or multiple; handle both
-      this.acceptStates = Array.isArray(acceptStates) ? acceptStates : [acceptStates];
-    }
-  
-    // Checks if inputString is accepted by the FA
-    accept(inputString) {
-      // We keep track of the set of current states (supports epsilon or NFA-like transitions)
-      let currentStates = new Set([this.startState]);
-  
-      for (const char of inputString) {
-        // Next states after consuming 'char'
-        let nextStates = new Set();
-  
-        // For each possible current state, see which transitions are available
-        for (const state of currentStates) {
-          const validTransitions = this.findTransitions(state, char);
-          for (const t of validTransitions) {
-            nextStates.add(t.dest);
-          }
-        }
-  
-        // If we have no next states, the string is immediately rejected
-        if (nextStates.size === 0) {
-          return false;
-        }
-  
-        // Update currentStates
-        currentStates = nextStates;
-      }
-  
-      // If after consuming the entire string, at least one currentState is accepting, accept the string
-      for (const state of currentStates) {
-        if (this.acceptStates.includes(state)) {
-          return true;
-        }
-      }
-  
-      // Otherwise, reject
-      return false;
-    }
-  
-    // Helper: find all transitions from currentState on inputSymbol
-    findTransitions(currentState, inputSymbol) {
-      return this.transitions.filter(
-        (t) => t.src === currentState && t.char === inputSymbol
-      );
-    }
+  constructor(states, alphabet, transitions, start_state, accept_state) {
+    this.states = states;
+    this.alphabet = alphabet;
+    this.transitions = transitions; // e.g. [{src, char, dest}, ...]
+    this.start_state = start_state;
+    this.accept_state = accept_state;
   }
-  
+
+  /**
+   * Check acceptance by following all possible transitions in a simple NFA sense.
+   * (Though your colleague code lumps final states into "end" so it’s effectively
+   *  a single final state.)
+   */
+  accept(inputString) {
+    // We keep track of a set of current states (NFA approach).
+    let currentStates = new Set([this.start_state]);
+
+    for (let i = 0; i < inputString.length; i++) {
+      const symbol = inputString[i];
+      let nextStates = new Set();
+
+      // For each currentState, see what transitions we have on `symbol`
+      currentStates.forEach((st) => {
+        const validTransitions = this.find_transitions(st, symbol);
+        validTransitions.forEach((t) => {
+          nextStates.add(t.dest);
+        });
+      });
+
+      if (nextStates.size === 0) {
+        // No possible transitions => reject
+        return false;
+      }
+      // Move to the next set of states
+      currentStates = nextStates;
+    }
+
+    // After consuming all symbols, check if at least one current state is "end"
+    for (let st of currentStates) {
+      // The colleague's code uses `.includes(st)`:
+      // That means "end".includes(st) if st === "end" => true
+      // But to be safer, do an exact check:
+      if (st === this.accept_state) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  find_transitions(state, symbol) {
+    return this.transitions.filter(
+      (t) => t.src === state && t.char === symbol
+    );
+  }
+}
