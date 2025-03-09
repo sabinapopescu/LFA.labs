@@ -121,6 +121,7 @@ After running the code:
 - **DFA Construction**: The `to_dfa()` method merges states into subsets, forming a deterministic version.
 
 ---
+![Screenshot 2025-03-09 174022](https://github.com/user-attachments/assets/bb79d6d6-30c6-49a5-9013-7edfeae1f67a)
 
 ## 5. Conclusions
 
