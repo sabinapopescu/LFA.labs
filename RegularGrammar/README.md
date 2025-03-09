@@ -197,5 +197,6 @@ String 'adba' => accepted? true
 String 'adaba' => accepted? true
 ...
 ```
+![Screenshot 2025-03-09 174037](https://github.com/user-attachments/assets/b6689914-cab8-4f0c-9701-56162356218d)
 
 We may also classify the grammar (Type 3, Type 2, etc.). Since each rule is at most one terminal plus an optional non-terminal, it typically qualifies as **Regular Grammar (Type 3)**.
