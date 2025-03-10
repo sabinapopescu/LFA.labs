@@ -21,7 +21,7 @@ languages and automata (computational models) that recognize these languages.
   generate context-free languages often used in the analysis of programming languages.
 - **Type 1** or **context-sensitive grammars** are more complex and are recognized by linear-bounded
   automata; they generate context-sensitive languages that can describe some natural language
-  constructs not possible with Type 2.
+  constructs not possible with Type 2.
 - At the top of the hierarchy is **Type 0**, which includes **recursively enumerable grammars** recognized
   by Turing machines. This level is the most powerful, capable of expressing any computation that can
   be performed by a computer.
@@ -101,7 +101,7 @@ recognition, although NFAs can often represent languages more succinctly.
 ### 3.2. Code Implementation
 
 #### **Finite Automaton Class**
-
+The following JavaScript class defines a non-deterministic finite automaton (NDFA). This class is essential as it structures the automaton, defining its states, alphabet, and transitions. It acts as the foundation for further operations such as conversion to regular grammar and DFA.
 ```js
 export class FiniteAutomaton {
     constructor() {
@@ -127,7 +127,7 @@ export class FiniteAutomaton {
 > **Explanation:** This constructor defines an **NDFA** with **multiple transitions** for a single input. The `transitions` array contains objects mapping a source state, an input character, and a destination state.
 
 #### **Converting NDFA to Regular Grammar**
-
+This function is crucial because it allows us to represent the NDFA as a regular grammar. This transformation helps in understanding the language accepted by the automaton in a different format, making it easier to analyze and use in other formal language contexts.
 ```js
 to_regular_grammar() {
     let grammar = {
@@ -153,6 +153,7 @@ to_regular_grammar() {
 
 #### **Checking If the Automaton is Deterministic**
 
+This function determines whether the automaton is deterministic or non-deterministic. It is essential because deterministic automata are simpler to implement and analyze. If an automaton is non-deterministic, we may need to convert it to a DFA for practical applications.
 ```js
 is_deterministic() {
     const transitionMap = {};
