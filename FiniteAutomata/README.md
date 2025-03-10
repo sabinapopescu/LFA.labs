@@ -80,35 +80,104 @@ recognition, although NFAs can often represent languages more succinctly.
 
 ### 3.1. Finite Automaton Definition for Variant 24
 
-- \(Q = \{q0, q1, q2\}\)
-- \(\Sigma = \{a, b\}\)
-- Start state: \(q0\)
-- Final state(s): \( \{q2\} \)
-- Transitions:
-  - \(\delta(q0, b) = q0\)
-  - \(\delta(q0, b) = q1\)
-  - \(\delta(q1, b) = q2\)
-  - \(\delta(q0, a) = q0\)
-  - \(\delta(q1, a) = q1\)
-  - \(\delta(q2, a) = q2\)
+**Finite Automaton (NDFA) Definition**:
 
-### 3.2. Example Usage
+- **States:** `Q = {q0, q1, q2}`
+- **Alphabet:** `Σ = {a, b}`
+- **Start state:** `q0`
+- **Final state(s):** `{q2}`
+- **Transition Functions:**
+
+| State | Input | Next States |
+|--------|------|------------|
+| `q0` | `b` | `q0`, `q1` |
+| `q1` | `b` | `q2` |
+| `q0` | `a` | `q0` |
+| `q1` | `a` | `q1` |
+| `q2` | `a` | `q2` |
+
+---
+
+### 3.2. Code Implementation
+
+#### **Finite Automaton Class**
 
 ```js
-// index.js (snippet)
-import { FiniteAutomaton } from "./FiniteAutomaton.js";
+export class FiniteAutomaton {
+    constructor() {
+        // States and alphabet of the NDFA (Variant 24)
+        this.states = ["q0", "q1", "q2"];
+        this.alphabet = ["a", "b"];
+        
+        // Defining the transition function (NDFA can have multiple transitions for the same input)
+        this.transitions = [
+            { src: "q0", char: "b", dest: "q0" },
+            { src: "q0", char: "b", dest: "q1" },
+            { src: "q1", char: "b", dest: "q2" },
+            { src: "q0", char: "a", dest: "q0" },
+            { src: "q1", char: "a", dest: "q1" },
+            { src: "q2", char: "a", dest: "q2" },
+        ];
 
-const fa = new FiniteAutomaton();
-
-console.log("=== Regular Grammar ===");
-console.log(fa.to_regular_grammar());
-
-console.log("\n=== Is FA Deterministic? ===");
-console.log(fa.is_deterministic());
-
-console.log("\n=== Converted to DFA ===");
-console.log(fa.to_dfa());
+        this.start_state = "q0";
+        this.accept_state = "q2";
+    }
+}
 ```
+> **Explanation:** This constructor defines an **NDFA** with **multiple transitions** for a single input. The `transitions` array contains objects mapping a source state, an input character, and a destination state.
+
+#### **Converting NDFA to Regular Grammar**
+
+```js
+to_regular_grammar() {
+    let grammar = {
+        terminals: [],
+        non_terminals: [],
+        rules: [],
+        start: "",
+    };
+
+    this.alphabet.forEach((char) => grammar.terminals.push(char));
+    this.states.forEach((state) => grammar.non_terminals.push(state));
+
+    this.transitions.forEach(({ src, char, dest }) => {
+        grammar.rules.push(`${src}-${char}->${dest}`);
+    });
+
+    grammar.start = this.start_state;
+    return grammar;
+}
+```
+> **Explanation:** This method converts the automaton transitions into a **regular grammar format**.  
+> Example output: `q0-b->q1`, `q1-a->q1`, etc.
+
+#### **Checking If the Automaton is Deterministic**
+
+```js
+is_deterministic() {
+    const transitionMap = {};
+
+    for (let { src, char, dest } of this.transitions) {
+        if (!transitionMap[src]) {
+            transitionMap[src] = {};
+        }
+        if (!transitionMap[src][char]) {
+            transitionMap[src][char] = new Set();
+        }
+
+        transitionMap[src][char].add(dest);
+
+        // If a state has more than one transition for the same symbol, it's non-deterministic
+        if (transitionMap[src][char].size > 1) {
+            return false;
+        }
+    }
+    return true;
+}
+```
+> **Explanation:**  
+> - Stores transitions in a dictionary and checks if any state has multiple transitions for a single input.  
+> - **Returns `false` if NDFA detected** (i.e., multiple transitions for `q0` on `b`).
 
 ---
 
