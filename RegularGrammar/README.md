@@ -172,31 +172,8 @@ If, after consuming the entire string, at least one current state is the `accept
 ## Results
 After running the code with a few example strings, we can see which ones are accepted or rejected based on whether they can be derived from the grammar. Randomly generated strings might be very large due to the recursive nature of `D → aD`. Typical sample output might look like:
 
-```
-Generated strings to test: [
-  'ab',
-  'ad',
-  'bd',
-  'bbba',
-  'adba',
-  'abadbbdaba',
-  'abababababadba',
-  'abadba',
-  'adba',
-  'adaba'
-]
-String 'ab' => accepted? false
-String 'ad' => accepted? false
-String 'bd' => accepted? false
-String 'bbba' => accepted? false
-String 'adba' => accepted? true
-String 'abadbbdaba' => accepted? true
-String 'abababababadba' => accepted? true
-String 'abadba' => accepted? true
-String 'adba' => accepted? true
-String 'adaba' => accepted? true
-...
-```
-![Screenshot 2025-03-09 174037](https://github.com/user-attachments/assets/b6689914-cab8-4f0c-9701-56162356218d)
+
+![Screenshot 2025-03-10 092907](https://github.com/user-attachments/assets/c35628a8-d78e-4bb7-bda7-99dfd16e74c6)
+
 
 We may also classify the grammar (Type 3, Type 2, etc.). Since each rule is at most one terminal plus an optional non-terminal, it typically qualifies as **Regular Grammar (Type 3)**.
