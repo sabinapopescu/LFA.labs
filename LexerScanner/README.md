@@ -24,8 +24,6 @@
 
 ## 3. Implementation Description
 
-## 3. Implementation Description
-
 ### 3.1 Overview
 
 The project is organized around a `Lexer` class, whose purpose is to process an input string and generate tokens. The tokens, along with their respective categories, are defined separately. The overall design emphasizes modularity, allowing for clear separation between helper methods and core tokenization functions.
