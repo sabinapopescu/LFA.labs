@@ -1,4 +1,4 @@
-# Lexer & Scanner
+# Lexer 
 
 ### Course: Formal Languages & Finite Automata
 
