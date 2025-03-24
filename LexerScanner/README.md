@@ -133,20 +133,15 @@ nextToken() {
 In the `index.js` file, we instantiate the `Lexer` with some test input and print out the resulting tokens:
 
 ```js
-// (Snippet from index.js)
-import Lexer from "./Lexer.js";
-
 const input = `
-// This is a comment
-let x = 3.14
-if (x >= 3) {
-  x = x + 1
+
+function doSomething() {
+
+  if (x != 5) {
+    x = 10
+  }
 }
 `;
-
-const lexer = new Lexer(input);
-const tokens = lexer.tokenize();
-console.log(tokens);
 ```
 
 ### Sample Output
@@ -155,41 +150,6 @@ You might see tokens like:
 
 ```
 [
-  Token { type: 'LET', value: 'let' },
-  Token { type: 'IDENTIFIER', value: 'x' },
-  Token { type: 'ASSIGN', value: '=' },
-  Token { type: 'FLOAT', value: '3.14' },
-  Token { type: 'IF', value: 'if' },
-  Token { type: 'L_PAREN', value: '(' },
-  Token { type: 'IDENTIFIER', value: 'x' },
-  Token { type: 'GREATER_EQUAL', value: '>=' },
-  Token { type: 'INTEGER', value: '3' },
-  Token { type: 'R_PAREN', value: ')' },
-  Token { type: 'L_CURLY', value: '{' },
-  Token { type: 'IDENTIFIER', value: 'x' },
-  Token { type: 'ASSIGN', value: '=' },
-  Token { type: 'IDENTIFIER', value: 'x' },
-  Token { type: 'PLUS', value: '+' },
-  Token { type: 'INTEGER', value: '1' },
-  Token { type: 'R_CURLY', value: '}' },
-  Token { type: 'FUNCTION', value: 'function' },
-  Token { type: 'IDENTIFIER', value: 'x' },
-  Token { type: 'ASSIGN', value: '=' },
-  Token { type: 'IDENTIFIER', value: 'x' },
-  Token { type: 'PLUS', value: '+' },
-  Token { type: 'INTEGER', value: '1' },
-  Token { type: 'R_CURLY', value: '}' },
-  Token { type: 'FUNCTION', value: 'function' },
-  Token { type: 'IDENTIFIER', value: 'x' },
-  Token { type: 'PLUS', value: '+' },
-  Token { type: 'INTEGER', value: '1' },
-  Token { type: 'R_CURLY', value: '}' },
-  Token { type: 'FUNCTION', value: 'function' },
-  Token { type: 'INTEGER', value: '1' },
-  Token { type: 'R_CURLY', value: '}' },
-  Token { type: 'FUNCTION', value: 'function' },
-  Token { type: 'R_CURLY', value: '}' },
-  Token { type: 'FUNCTION', value: 'function' },
   Token { type: 'FUNCTION', value: 'function' },
   Token { type: 'IDENTIFIER', value: 'doSomething' },
   Token { type: 'L_PAREN', value: '(' },
@@ -210,7 +170,8 @@ You might see tokens like:
   Token { type: 'EOF', value: null }
 ]
 ```
-![Screenshot 2025-03-09 174102](https://github.com/user-attachments/assets/1b40a54d-4d68-450f-a527-5aadedefaf8f)
+![image](https://github.com/user-attachments/assets/4addb268-c2e3-41f4-9617-7b0de009b4c8)
+
 
 ## 5. Conclusion
 
