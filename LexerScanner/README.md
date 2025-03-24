@@ -183,18 +183,9 @@ You might see tokens like:
 ```
 ![image](https://github.com/user-attachments/assets/4addb268-c2e3-41f4-9617-7b0de009b4c8)
 
-
 ## 5. Conclusion
 
-With this simple lexer, we have demonstrated:
-- How to classify and read tokens from a string.
-- How to handle comments, floats, and multi-character operators.
-- The flexibility of JavaScript regular expressions for quick checks like digits or letters.
-
-Further enhancements could include:
-- **Multi-line comments** (`/* */`).
-- **String literals** with escape characters.
-- **Error recovery** instead of immediate throws.
+This simple lexer has shown how to effectively classify and extract tokens from a raw string. It demonstrates the process of handling various aspects of source code, such as comments, floating-point numbers, and multi-character operators, while taking advantage of the flexibility provided by JavaScript regular expressions for tasks like digit or letter recognition. Looking ahead, there are several opportunities for enhancement, such as adding support for multi-line comments, incorporating string literals with escape characters, and implementing more sophisticated error recovery mechanisms rather than simply terminating on an error.
 
 ## 6. References
 
