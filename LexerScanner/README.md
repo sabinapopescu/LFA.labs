@@ -24,14 +24,19 @@
 
 ## 3. Implementation Description
 
+## 3. Implementation Description
+
 ### 3.1 Overview
 
-The core of this project is the `Lexer.js` file, which exports a `Lexer` class. This class reads the input string and splits it into tokens using several helper methods. The recognized tokens and their categories are defined in `Token.js`.
+The project is organized around a `Lexer` class, whose purpose is to process an input string and generate tokens. The tokens, along with their respective categories, are defined separately. The overall design emphasizes modularity, allowing for clear separation between helper methods and core tokenization functions.
 
-### 3.2 Token Definition
+### 3.2 Token Definitions
 
-We have a simple `Token` class and three dictionaries: one for keywords, one for operators (including multi-character operators like `==`, `>=`, etc.), and one for separators:
-
+The token definitions are managed by a `Token` class and several dictionaries:
+- **Token:** Encapsulates a token's type and its literal value.
+- **KEYWORDS:** A dictionary that maps reserved words (e.g., `if`, `else`, `function`) to their token types, ensuring that they are not mistaken for identifiers.
+- **OPERATORS:** Lists both single-character and multi-character operators (e.g., `+`, `-`, `==`, `!=`), which are essential for expression evaluation.
+- **SEPARATORS:** Contains symbo
 ```js
 // (Snippet from Token.js)
 export class Token {
@@ -64,18 +69,6 @@ export const SEPARATORS = {
 };
 ```
 
-### 3.3 Lexer Class
-
-The `Lexer` holds and advances through the input string. Key properties and methods include:
-
-- `this.input`: The source code string.
-- `this.index`: Current reading position in the string.
-- **Helper Methods**:
-  - `isAlpha(char)`: Checks if `char` is alphabetic or `_`.
-  - `isDigit(char)`: Checks if `char` is a digit.
-  - `isAlphanumeric(char)`: Combination of the above checks.
-
-#### Reading Tokens
 
 ### 3.3 Functions of the Lexer Class
 
