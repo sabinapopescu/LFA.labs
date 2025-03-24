@@ -77,22 +77,42 @@ The `Lexer` holds and advances through the input string. Key properties and meth
 
 #### Reading Tokens
 
-1. **`nextToken()`**  
-   - Skips whitespace.  
-   - Ignores single-line comments (`// ...`).  
-   - Distinguishes between **numbers** (including floats), **identifiers/keywords**, and **operators/separators**.  
-   - Returns one `Token` instance.  
+### 3.3 Functions of the Lexer Class
 
-2. **`readNumber()`**  
-   - Gathers consecutive digits and optionally one decimal point to support floats.  
-   - Produces either an `INTEGER` or a `FLOAT` token.
+Below is an explanation of the key functions within the `Lexer` class, focusing on their purpose and implementation approach:
 
-3. **`readIdentifierOrKeyword()`**  
-   - Gathers letters/digits/underscore, checks if the resulting string matches a known keyword.  
-   - Otherwise, returns an `IDENTIFIER`.
+- **Constructor:**  
+  Initializes the lexer with the raw input string. It also sets the initial reading index and combines dictionaries for operators and separators. The symbols are sorted by length (in descending order) to ensure that multi-character symbols (like "==") are prioritized over single-character ones (like "=").
 
-4. **`tokenize()`**  
-   - Continuously calls `nextToken()` until `EOF` is reached, storing all tokens in an array.  
+- **isAlpha:**  
+  Checks whether a given character is an alphabet letter or an underscore. This function is crucial for identifying the beginning of an identifier or keyword.
+
+- **isDigit:**  
+  Determines if a character is a digit (0–9). This function is fundamental for parsing numerical values.
+
+- **isAlphanumeric:**  
+  Combines the functionality of `isAlpha` and `isDigit` to check if a character is a letter, digit, or underscore. This is used to build complete identifiers.
+
+- **nextToken:**  
+  The core method that reads the input from the current index and returns the next recognized token. It:
+  - Skips whitespace.
+  - Ignores single-line comments.
+  - Checks if the next token is a number, an identifier/keyword, or an operator/separator.
+  - Returns an `EOF` token if the end of input is reached.
+  
+  This method is essential for orchestrating the overall tokenization process.
+
+- **readNumber:**  
+  Processes a sequence of digits, allowing for at most one decimal point, to produce either an `INTEGER` or a `FLOAT` token. This function ensures numerical values are correctly parsed, which is critical for arithmetic operations.
+
+- **readIdentifierOrKeyword:**  
+  Reads characters to form an identifier, then checks if the identifier matches any reserved keywords. If a match is found, a corresponding keyword token is returned; otherwise, an `IDENTIFIER` token is produced. This distinction is vital to differentiate user-defined names from language keywords.
+
+- **tokenize:**  
+  Repeatedly calls `nextToken` to process the entire input string until an `EOF` token is encountered. It collects all tokens into an array, providing a complete token stream for the parser. This method encapsulates the end-to-end tokenization process.
+
+---
+
 
 Below is a short snippet showing how `nextToken()` starts:
 
