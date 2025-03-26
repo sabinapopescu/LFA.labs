@@ -10,3 +10,4 @@ console.log(fa.is_deterministic());
 
 console.log("\n=== Converted to DFA ===");
 console.log(fa.to_dfa());
+

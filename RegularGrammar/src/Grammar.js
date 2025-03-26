@@ -3,12 +3,11 @@ import { FiniteAutomaton } from "./FiniteAutomaton.js";
 
 export class Grammar {
   constructor() {
-    // Terminals include 'd' as well, because of A → dD
+    // Terminals
     this.terminals = ["a", "b", "d"];
     // Non-terminals
     this.non_terminals = ["S", "A", "C", "D"];
     // Right-linear rules in "X-..." form
-    // Each rule "X-yZ" means X → yZ in the usual grammar notation
     this.rules = [
       "S-aA",  // S → aA
       "A-bS",  // A → bS
@@ -23,124 +22,126 @@ export class Grammar {
   }
 
   /**
-   * Generates a random string by recursively expanding non-terminals.
-   * WARNING: Because of D → aD, strings can get very long. 
-   * In practice, you might want to cap the recursion depth.
+   * Repeatedly expand non-terminals (left to right) until:
+   *   - No non-terminals remain (fully derived),
+   *   - or we hit maxSteps to prevent infinite loops.
+   *
+   * Returns a string of terminals. If we exit due to maxSteps,
+   * we might still have non-terminals. But often it completes fully.
    */
-  generate_string() {
-    const expand = (symbol) => {
-      // If it's a terminal, just return it
-      if (this.terminals.includes(symbol)) {
-        return symbol;
+  generate_string(maxSteps = 30) {
+    // We'll store the current "sentence" as an array of symbols (terminals or non-terminals)
+    let derived = [this.start];
+
+    for (let step = 0; step < maxSteps; step++) {
+      // Find the first non-terminal in 'derived'
+      const indexOfNT = derived.findIndex(sym => this.non_terminals.includes(sym));
+
+      // If no non-terminals found => done, it's all terminals
+      if (indexOfNT === -1) {
+        break;
       }
 
-      // Otherwise, find the rules for this non-terminal
-      const productions = this.rules
-        .filter((rule) => rule.startsWith(symbol + "-")) // e.g. "S-..."
-        .map((rule) => rule.split("-")[1]);              // right side strings
+      // Identify which non-terminal we found
+      const ntSymbol = derived[indexOfNT];
 
-      // If no production found, stop expansion
-      if (productions.length === 0) {
-        return "";
+      // All expansions that match ntSymbol → (rightSide)
+      const possibleExpansions = this.rules
+        .filter(r => r.startsWith(ntSymbol + "-"))
+        .map(r => r.split("-")[1]); // e.g. "aA"
+
+      // If no expansions exist, just stop
+      if (possibleExpansions.length === 0) {
+        break;
       }
 
-      // Randomly pick one production
-      const chosen = productions[Math.floor(Math.random() * productions.length)];
+      // Randomly choose one expansion
+      const chosen = possibleExpansions[Math.floor(Math.random() * possibleExpansions.length)];
 
-      // Example: chosen = "aA" => split into ["a", "A"], expand each recursively
-      return chosen
-        .split("")
-        .map((s) => expand(s))
-        .join("");
-    };
+      // Replace the non-terminal with the symbols of 'chosen'
+      derived.splice(indexOfNT, 1, ...chosen.split(""));
+    }
 
-    // Start from S
-    return expand(this.start);
+    // Join everything into a string
+    return derived.join("");
   }
 
   /**
-   * Converts the grammar to a (very simplistic) finite automaton.
-   * This is your colleague’s “transitions” approach:
-   *  - If X → y (1 terminal), then from state X on y go to "end".
-   *  - If X → yZ (terminal + nonterminal), from X on y go to Z.
-   * 
-   * NOTE: This lumps all final transitions into a single "end" state.
+   * Generate 'n' strings. Each is made by calling 'generate_string()'.
+   */
+  generate_n_strings(n = 5, maxSteps = 30) {
+    const strings = [];
+    for (let i = 0; i < n; i++) {
+      strings.push(this.generate_string(maxSteps));
+    }
+    return strings;
+  }
+
+  /**
+   * Converts this right-linear grammar into a simple finite automaton.
    */
   to_finite_automaton() {
     const alphabet = [...this.terminals];
-    // They treat states as the grammar's non-terminals plus one extra "end" state
     const states = [...this.non_terminals, "end"];
     const start_state = this.start;
     const accept_state = "end";
 
     const transitions = [];
 
+    // Build transitions from each rule
     this.rules.forEach((rule) => {
       const [leftSide, rightSide] = rule.split("-");
-      // If the right side is exactly 1 character and it's terminal => transition to end
+
+      // If the right side is exactly one terminal => go to "end"
       if (rightSide.length === 1 && this.terminals.includes(rightSide)) {
         transitions.push({
-          src: leftSide,    // from non-terminal (e.g. C)
-          char: rightSide,  // e.g. 'a'
+          src: leftSide,
+          char: rightSide,
           dest: accept_state
         });
-      } 
-      // If the right side is > 1 (e.g. 2 chars like "aA"), then from leftSide on firstChar => secondChar
-      else if (rightSide.length >= 2) {
+      }
+      // If the right side is two symbols: a terminal + a non-terminal
+      else if (rightSide.length === 2) {
         const [t, n] = [rightSide[0], rightSide[1]];
         transitions.push({
-          src: leftSide, // e.g. 'S'
-          char: t,       // e.g. 'a'
-          dest: n        // e.g. 'A'
+          src: leftSide,
+          char: t,
+          dest: n
         });
       }
-      // If there's any other pattern, it's ignored or not used in this simplistic approach
+      // Otherwise, ignore (for the simplistic approach)
     });
 
-    return new FiniteAutomaton(
-      states,
-      alphabet,
-      transitions,
-      start_state,
-      accept_state
-    );
+    return new FiniteAutomaton(states, alphabet, transitions, start_state, accept_state);
   }
 
   /**
-   * A simplistic “classification” check that tries to see if this grammar 
-   * is Type 3 (right-regular), Type 2, Type 1, or Type 0.
-   * 
-   * It's a rough check based on the shape of productions.
-   * 
-   * (Your colleague’s code checks if each rule is “terminal + optional single non-terminal”. 
-   *  If so, calls it Type 3.)
+   * Quick check to classify grammar type: Type 3 > Type 2 > Type 1 > Type 0
    */
   classify() {
-    let isType3 = true; // assume Regular
-    let isType2 = true; // assume Context-Free
-    let isType1 = true; // assume Context-Sensitive
+    let isType3 = true;
+    let isType2 = true;
+    let isType1 = true;
 
     this.rules.forEach((rule) => {
       const [leftSide, rightSide] = rule.split("-");
       const symbols = rightSide.split("");
-      const terminalSymbols = symbols.filter((sym) => this.terminals.includes(sym));
-      const nonTerminalSymbols = symbols.filter((sym) => this.non_terminals.includes(sym));
+      const terminalSymbols = symbols.filter(s => this.terminals.includes(s));
+      const nonTerminalSymbols = symbols.filter(s => this.non_terminals.includes(s));
 
-      // Check Type 3 condition: (exactly 1 terminal + optional 1 nonterminal) or empty?
-      // We don't have ε-rules here, so ignore that. 
-      // This code is not a perfect definition, but we'll keep the colleague's logic.
+      // For Type 3:
+      //   left side => single NT
+      //   right side => at most 1 T + at most 1 NT (or just 1 T)
       if (!(terminalSymbols.length <= 1 && nonTerminalSymbols.length <= 1 && symbols.length <= 2)) {
         isType3 = false;
       }
 
-      // Check Type 2 condition: each rule has a single non-terminal on LHS
+      // For Type 2: left side must be exactly one non-terminal
       if (leftSide.length !== 1 || !this.non_terminals.includes(leftSide)) {
         isType2 = false;
       }
 
-      // Check Type 1 condition: right side length >= left side length (and no other constraints)
-      // (For context-sensitive, each production must not shrink the string except possibly S->ε if allowed.)
-      // Here we do a naive check:
+      // For Type 1: right side length >= left side length (simplistic check)
       if (rightSide.length < leftSide.length) {
         isType1 = false;
       }

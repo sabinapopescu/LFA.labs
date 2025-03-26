@@ -6,18 +6,14 @@ const fa = grammar.to_finite_automaton();
 
 console.log("Finite Automaton created:", fa);
 
-// Let’s pick some test strings (including one you know is derivable: "adba")
-let testStrings = ["ab", "ad", "bd", "bbba", "adba"];
+// Generate 5 strings, each fully derived from the grammar
+const fiveStrings = grammar.generate_n_strings(5);
 
-// Also generate 5 random strings from the grammar
-for (let i = 0; i < 5; i++) {
-  testStrings.push(grammar.generate_string());
-}
+console.log("Five valid strings following the grammar rules:", fiveStrings);
 
-console.log("Generated strings to test:", testStrings);
-
-testStrings.forEach((s) => {
+fiveStrings.forEach((s) => {
   console.log(`String '${s}' => accepted? ${fa.accept(s)}`);
 });
 
+// Classification
 console.log("Classification:", grammar.classify());
