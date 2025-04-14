@@ -18,7 +18,7 @@ Regex plays a vital role in **lexical analysis**, where source code or text is s
 | `a`            | A literal character                                              |
 | `a*`           | Zero or more occurrences of `a` (Kleene star)                    |
 | `a+`           | One or more occurrences of `a`                                   |
-| `a|b`          | Either `a` or `b` (alternation)                                  |
+| `a\|b`            | Either `a` or `b` (alternation)                                  |
 | `(ab)`         | Grouping of subpatterns                                          |
 | `a²`, `a³`     | Exact repetitions of a character (2 or 3 times, respectively)    |
 
