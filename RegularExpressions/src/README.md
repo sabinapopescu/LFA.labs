@@ -121,6 +121,7 @@ Processing Steps:
  - Chose option "Y" from group (X|Y|Z)
  - Repeated "Y" exactly 2 times for superscript "²"
 ```
+![image](https://github.com/user-attachments/assets/fc628c94-1420-4a9c-8bc1-e8ff49d4ff29)
 
 Each result is randomly generated but conforms strictly to the pattern described by its respective regex.
 
