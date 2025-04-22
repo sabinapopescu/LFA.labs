@@ -170,19 +170,10 @@ Tokens:
 
 ---
 
-## 5. Project Structure
+## 5. Program Output
 
-```
-project-root/
-├── lexer/
-│   └── Lexer.js
-├── ast/
-│   └── ASTNode.js
-├── parser/
-│   └── Parser.js
-├── main.js
-├── REPORT.md
-```
+<img width="403" alt="image" src="https://github.com/user-attachments/assets/d51e32f3-2395-443e-aeb2-32a0d51d63c4" />
+
 
 ---
 
