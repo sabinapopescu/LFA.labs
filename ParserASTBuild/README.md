@@ -186,7 +186,7 @@ The implementation highlights how formal languages and finite automata can be le
 The work done in this project reinforced the importance of parsing and AST generation in the broader context of language processing. It underscored how theoretical concepts like formal grammars and finite automata directly translate into practical applications, enabling more efficient and structured program execution. As such, the project not only provided a deeper understanding of how compilers and interpreters work internally but also demonstrated how abstract syntax trees act as the backbone for these tools.
 
 
-## 8. References
+## 7. References
 
 1. Formal Languages & Finite Automata — Lecture Notes  
 2. Aho, Lam, Sethi, Ullman — *Compilers: Principles, Techniques, and Tools*  
