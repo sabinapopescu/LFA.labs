@@ -185,17 +185,6 @@ The implementation highlights how formal languages and finite automata can be le
 
 The work done in this project reinforced the importance of parsing and AST generation in the broader context of language processing. It underscored how theoretical concepts like formal grammars and finite automata directly translate into practical applications, enabling more efficient and structured program execution. As such, the project not only provided a deeper understanding of how compilers and interpreters work internally but also demonstrated how abstract syntax trees act as the backbone for these tools.
 
----
-
-## 7. Future Improvements
-
-- Extend the parser to support `if`, `for`, `let`, and other keywords.
-- Add support for unary operations (`-a`, `+a`) and assignment (`=`).
-- Introduce error recovery and better diagnostic messages.
-- Build an interpreter to execute the AST.
-- Export the tree to a visual format (e.g., Graphviz or D3.js).
-
----
 
 ## 8. References
 
