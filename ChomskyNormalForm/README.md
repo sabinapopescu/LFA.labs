@@ -158,37 +158,16 @@ Each method is applied sequentially to transform the grammar into CNF.
 Once the code is run, the CNF grammar is printed clearly with productions separated and grouped by non-terminal:
 
 ```
-CNF Grammar:
-
-A → d | T0 S | X12 B | X14 A | X16 B | X17 A
-B → a | T0 A | d | T0 S | X20 B | X22 A | X24 B | X25 A
-S → T0 B | d | d | T0 S | X4 B | X6 A | X8 B | X9 A
+A → d | T0 S | X4 B | X3 A | X6 B | X5 A
+B → a | T0 A | d | T0 S | X4 B | X3 A | X6 B | X5 A
+S → T0 B | d | T0 S | X4 B | X3 A | X6 B | X5 A
 T0 → d
 T1 → a
-X10 → T1 B
-X11 → X10 T0
-X12 → X11 A
-X13 → T1 B
-X14 → X13 T0
-X15 → T1 T0
-X16 → X15 A
-X17 → T1 T0
-X18 → T1 B
-X19 → X18 T0
 X2 → T1 B
-X20 → X19 A
-X21 → T1 B
-X22 → X21 T0
-X23 → T1 T0
-X24 → X23 A
-X25 → T1 T0
 X3 → X2 T0
 X4 → X3 A
-X5 → T1 B
-X6 → X5 T0
-X7 → T1 T0
-X8 → X7 A
-X9 → T1 T0
+X5 → T1 T0
+X6 → X5 A
 ```
 
 This output is now easier to read and directly usable in further theoretical analysis or parsing tasks.
